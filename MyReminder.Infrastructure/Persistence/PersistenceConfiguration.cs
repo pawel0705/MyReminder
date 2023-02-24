@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -11,13 +12,17 @@ public static class PersistenceConfiguration
     public static IServiceCollection RegisterMyReminderContextDependencies(
         this IServiceCollection serviceCollection,
         IConfiguration configuration)
-        => serviceCollection
-            .ConfigureDatabaseConnection<MyReminderContext>(
+    {
+        var services = serviceCollection
+            .ConfigureDBConnection<MyReminderContext>(
                 configuration,
-                FacilityContextConnectionStringSectionKey,
-                Assembly.GetExecutingAssembly().FullName,
-                MigrationsSchemaSettingsExtractor.Extract(configuration).FacilityContext);
+                MyReminderContextConnectionStringSectionKey,
+                Assembly.GetExecutingAssembly().FullName!,
+                "MyReminder");
 
-    public static IApplicationBuilder UseFacilityContextMigrations(this IApplicationBuilder applicationBuilder)
-        => applicationBuilder.UseMigrationsOfContext<FacilityContext>();
+        return services;
+    }
+
+    public static IApplicationBuilder UseMyReminderContextMigrations(this IApplicationBuilder applicationBuilder)
+        => applicationBuilder.UseMigrationsOfContext<MyReminderContext>();
 }

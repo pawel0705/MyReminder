@@ -1,4 +1,5 @@
 ﻿using MyReminder.Domain.Common.Entity;
+using MyReminder.Domain.Common.Events;
 using MyReminder.Domain.Common.ValueObject;
 
 public abstract class AggregateRoot<TAggregateId> : Entity<TAggregateId>
