@@ -69,12 +69,11 @@ public static class EFConfiguration
 
             throw new ArgumentException(errorMessage);
         }
-        // TODO odkomentowac
-        /*
+
         databaseContext?
             .Database
             .Migrate();
-        */
+
         return applicationBuilder;
     }
 }

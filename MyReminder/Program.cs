@@ -1,6 +1,8 @@
 using Serilog;
 using MyReminder.API;
 using MyReminder.Infrastructure.Persistence;
+using System.Reflection;
+using MediatR;
 
 AppDomain.CurrentDomain.UnhandledException += AppUncatchedExceptionHandler;
 
@@ -31,16 +33,18 @@ Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
 
+builder.Services
+    .RegisterDependencyInjection(builder.Configuration);
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Host.UseSerilog();
+builder.Services.AddOptions();
 
-builder.Services
-    .RegisterDependencyInjection(builder.Configuration);
+builder.Host.UseSerilog();
 
 var webApplication = builder.Build();
 

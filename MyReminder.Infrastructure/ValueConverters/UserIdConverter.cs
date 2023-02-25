@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyReminder.Domain.Common.ValueObject;
-using MyReminder.Domain.ValueObjects;
+using MyReminder.Domain.Entities.User.ValueObjects;
 
 namespace MyReminder.Infrastructure.ValueConverters;
 
