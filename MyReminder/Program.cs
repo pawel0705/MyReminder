@@ -3,6 +3,8 @@ using MyReminder.API;
 using MyReminder.Infrastructure.Persistence;
 using System.Reflection;
 using MediatR;
+using MyReminder.API.Helpers;
+using MyReminder.API.Authorization;
 
 AppDomain.CurrentDomain.UnhandledException += AppUncatchedExceptionHandler;
 
@@ -32,6 +34,8 @@ builder.Configuration
 Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .CreateLogger();
+
+builder.Services.Configure<Settings>(builder.Configuration.GetSection("AppSettings"));
 
 builder.Services
     .RegisterDependencyInjection(builder.Configuration);
