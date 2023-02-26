@@ -21,22 +21,11 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<Domain.Us
 
         entityTypeBuilder
             .Property(user => user.Email)
+            .HasMaxLength(Email.MaxCharLimit)
             .IsRequired();
 
         entityTypeBuilder
             .Property(user => user.PasswordHash)
             .IsRequired();
-
-        entityTypeBuilder
-            .Property(user => user.SecurityStamp)
-            .IsRequired();
-
-        entityTypeBuilder
-            .Property(user => user.Verified)
-            .IsRequired();
-
-        entityTypeBuilder
-           .Property(user => user.StoreDecrypted)
-           .IsRequired();
     }
 }
