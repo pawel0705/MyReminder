@@ -1,7 +1,6 @@
 ﻿using MyReminder.Domain.Common.ValueObject;
-using System.ComponentModel.DataAnnotations;
 
-namespace MyReminder.Domain.Entities.User.ValueObjects;
+namespace MyReminder.Domain.User.ValueObjects;
 
 public sealed record Email : ValueObject
 {

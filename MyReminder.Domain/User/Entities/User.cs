@@ -1,5 +1,5 @@
 ﻿using MyReminder.Domain.Common.ValueObject;
-using MyReminder.Domain.Entities.User.ValueObjects;
+using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Domain.User.Entities;
 

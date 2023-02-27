@@ -2,9 +2,9 @@
 
 namespace MyReminder.Domain.User.ValueObjects;
 
-public sealed record SecurityStamp : ValueObject
+public sealed record CreatedByIp : ValueObject
 {
-    public SecurityStamp(string value)
+    public CreatedByIp(string value)
     {
         Value = value;
     }

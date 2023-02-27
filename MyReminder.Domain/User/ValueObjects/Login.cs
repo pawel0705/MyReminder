@@ -1,6 +1,6 @@
 ﻿using MyReminder.Domain.Common.ValueObject;
 
-namespace MyReminder.Domain.Entities.User.ValueObjects;
+namespace MyReminder.Domain.User.ValueObjects;
 
 public sealed record Login : ValueObject
 {

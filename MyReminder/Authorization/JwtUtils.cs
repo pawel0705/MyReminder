@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyReminder.API.Helpers;
 using MyReminder.Application.Encryption;
 using MyReminder.Domain.User.Entities;
+using MyReminder.Infrastructure.Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace MyReminder.API.Authorization;
@@ -12,10 +15,14 @@ namespace MyReminder.API.Authorization;
 public class JwtUtils : IJwtUtils
 {
     private readonly Settings _settings;
+    private readonly MyReminderContext _myReminderContext;
 
-    public JwtUtils(IOptions<Settings> settings)
+    public JwtUtils(
+        IOptions<Settings> settings,
+        MyReminderContext myReminderContext)
     {
         _settings = settings.Value;
+        _myReminderContext = myReminderContext;
     }
 
     public string GenerateToken(User user)
@@ -67,5 +74,26 @@ public class JwtUtils : IJwtUtils
             // return null if validation fails
             return null;
         }
+    }
+
+    public RefreshToken GenerateRefreshToken(string ipAddress)
+    {
+        var refreshToken = new RefreshToken
+        {
+            // token is a cryptographically strong random sequence of values
+            Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)),
+            // token is valid for 7 days
+            Expires = DateTime.UtcNow.AddDays(7),
+            Created = DateTime.UtcNow,
+            CreatedByIp = ipAddress
+        };
+
+        // ensure token is unique by checking against db
+        var tokenIsUnique = !_myReminderContext.Users.Any(a => a.RefreshTokens.Any(t => t.Token == refreshToken.Token));
+
+        if (!tokenIsUnique)
+            return GenerateRefreshToken(ipAddress);
+
+        return refreshToken;
     }
 }
