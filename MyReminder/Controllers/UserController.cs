@@ -14,6 +14,10 @@ public sealed class UserController : Controller
 
     }
 
+    [HttpPost("login")]
+    [ProducesResponseType(200)]
+    public async Task<IActionResult> LoginAsync([FromBody] )
+
     [HttpPost("register")]
     [ProducesResponseType(201)]
     [AllowAnonymous]
