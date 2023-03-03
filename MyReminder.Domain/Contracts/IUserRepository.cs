@@ -1,5 +1,5 @@
-﻿using MyReminder.Domain.Entities.User.ValueObjects;
-using MyReminder.Domain.Models;
+﻿using MyReminder.Domain.Models;
+using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Domain.Contracts;
 

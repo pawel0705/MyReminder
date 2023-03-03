@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyReminder.Domain.Entities.User.ValueObjects;
+using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Infrastructure.ValueConverters;
 

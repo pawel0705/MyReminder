@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using MyReminder.Domain.Entities.User.ValueObjects;
+using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Infrastructure.User.EntitiesConfiguration;
 
@@ -27,5 +27,14 @@ public sealed class UserEntityConfiguration : IEntityTypeConfiguration<Domain.Us
         entityTypeBuilder
             .Property(user => user.PasswordHash)
             .IsRequired();
+
+        entityTypeBuilder
+            .HasMany(user => user.RefreshTokens)
+            .WithOne()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        entityTypeBuilder
+            .Property(user => user.Verified)
+            .IsConcurrencyToken();
     }
 }

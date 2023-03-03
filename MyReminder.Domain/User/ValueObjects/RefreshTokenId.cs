@@ -2,4 +2,4 @@
 
 namespace MyReminder.Domain.User.ValueObjects;
 
-public sealed record TokenId(Guid Id) : IdentityValueObject<TokenId>(Id);
+public sealed record RefreshTokenId(Guid Id) : IdentityValueObject<RefreshTokenId>(Id);

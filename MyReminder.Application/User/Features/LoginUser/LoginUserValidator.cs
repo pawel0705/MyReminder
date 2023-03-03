@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using MyReminder.Application.User.Features.RegisterUser;
 using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Application.User.Features.LoginUser;

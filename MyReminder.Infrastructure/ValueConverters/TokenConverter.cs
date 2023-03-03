@@ -3,10 +3,10 @@ using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Infrastructure.ValueConverters;
 
-public sealed class LoginConverter : ValueConverter<Login, string>
+public sealed class TokenConverter : ValueConverter<Token, string>
 {
-    public LoginConverter()
-        : base(login => login.Value, value => new Login(value))
+    public TokenConverter()
+        : base(securityStamp => securityStamp.Value, value => new Token(value))
     {
     }
 }
