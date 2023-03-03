@@ -4,10 +4,10 @@ using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Infrastructure.ValueConverters;
 
-public sealed class UserIdConverter : ValueConverter<IdentityValueObject<UserId>, Guid>
+public sealed class RefreshTokenIdConverter : ValueConverter<IdentityValueObject<RefreshTokenId>, Guid>
 {
-    public UserIdConverter()
-        : base(userId => userId, value => new UserId(value))
+    public RefreshTokenIdConverter()
+        : base(id => id, value => new RefreshTokenId(value))
     {
     }
 }

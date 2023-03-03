@@ -4,9 +4,9 @@ using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.Domain.User.Entities;
 
-public class RefreshToken : Entity<TokenId>
+public class RefreshToken : Entity<RefreshTokenId>
 {
-    public RefreshToken(IdentityValueObject<TokenId> id) : base(id)
+    public RefreshToken(IdentityValueObject<RefreshTokenId> id) : base(id)
     {
     }
 

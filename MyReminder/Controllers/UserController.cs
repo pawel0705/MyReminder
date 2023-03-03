@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyReminder.Application.Messaging;
+using MyReminder.Application.User.Features.LoginUser;
 using MyReminder.Application.User.Features.RegisterUser;
 
 namespace MyReminder.API.Controllers;
@@ -16,7 +17,14 @@ public sealed class UserController : Controller
 
     [HttpPost("login")]
     [ProducesResponseType(200)]
-    public async Task<IActionResult> LoginAsync([FromBody] )
+    public async Task<IActionResult> LoginAsync([FromBody] LoginUserCommand command, CancellationToken cancellationToken)
+    {
+        command = command with { IpAddress = IpAddress() };
+        var response = await CommandBus.SendAsync(command, cancellationToken);
+        SetTokenCookie(response.RefreshToken);
+
+        return Ok(response);
+    }
 
     [HttpPost("register")]
     [ProducesResponseType(201)]
@@ -26,5 +34,27 @@ public sealed class UserController : Controller
         var userResult = await CommandBus.SendAsync(command, cancellationToken);
 
         return Created(string.Empty, userResult);
+    }
+
+    private void SetTokenCookie(string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+        Response.Cookies.Append("refreshToken", token, cookieOptions);
+    }
+
+    private string IpAddress()
+    {
+        if (Request.Headers.ContainsKey("X-Forwarded-For"))
+        {
+            return Request.Headers["X-Forwarded-For"]!;
+        }
+        else
+        {
+            return HttpContext.Connection.RemoteIpAddress!.MapToIPv4().ToString();
+        }
     }
 }

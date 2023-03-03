@@ -1,4 +1,6 @@
-﻿namespace MyReminder.Application.Encryption;
+﻿using MyReminder.Domain.User.Entities;
+
+namespace MyReminder.Application.Encryption;
 
 public interface IJwtUtils
 {
