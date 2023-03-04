@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using MyReminder.API.Helpers;
 using MyReminder.Application.Encryption;
+using MyReminder.Application.Helpers;
 using MyReminder.Domain.User.Entities;
+using MyReminder.Domain.User.ValueObjects;
 using MyReminder.Infrastructure.Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -78,15 +78,14 @@ public class JwtUtils : IJwtUtils
 
     public RefreshToken GenerateRefreshToken(string ipAddress)
     {
-        var refreshToken = new RefreshToken
-        {
-            // token is a cryptographically strong random sequence of values
-            Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)),
-            // token is valid for 7 days
-            Expires = DateTime.UtcNow.AddDays(7),
-            Created = DateTime.UtcNow,
-            CreatedByIp = ipAddress
-        };
+        // token is a cryptographically strong random sequence of values
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        var refreshToken = new RefreshToken(
+            new RefreshTokenId(Guid.NewGuid()),
+            new Token(token),
+            DateTime.UtcNow.AddDays(7),
+            DateTime.UtcNow,
+            new CreatedByIp(ipAddress));
 
         // ensure token is unique by checking against db
         var tokenIsUnique = !_myReminderContext.Users.Any(a => a.RefreshTokens.Any(t => t.Token == refreshToken.Token));

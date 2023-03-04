@@ -1,10 +1,7 @@
 using Serilog;
 using MyReminder.API;
 using MyReminder.Infrastructure.Persistence;
-using System.Reflection;
-using MediatR;
-using MyReminder.API.Helpers;
-using MyReminder.API.Authorization;
+using MyReminder.Application.Helpers;
 
 AppDomain.CurrentDomain.UnhandledException += AppUncatchedExceptionHandler;
 
