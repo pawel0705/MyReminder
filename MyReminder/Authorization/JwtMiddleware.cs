@@ -1,6 +1,6 @@
 ﻿using MyReminder.Application.Encryption;
 using MyReminder.Domain.Contracts;
-using MyReminder.Domain.Entities.User.ValueObjects;
+using MyReminder.Domain.User.ValueObjects;
 
 namespace MyReminder.API.Authorization;
 

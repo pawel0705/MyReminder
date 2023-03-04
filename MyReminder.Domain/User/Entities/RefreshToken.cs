@@ -6,8 +6,17 @@ namespace MyReminder.Domain.User.Entities;
 
 public class RefreshToken : Entity<RefreshTokenId>
 {
-    public RefreshToken(IdentityValueObject<RefreshTokenId> id) : base(id)
+    public RefreshToken(
+        IdentityValueObject<RefreshTokenId> id,
+        Token token,
+        DateTime expires,
+        DateTime created,
+        CreatedByIp createdByIp) : base(id)
     {
+        Token = token;
+        Expires = expires;
+        Created = created;
+        CreatedByIp = createdByIp;
     }
 
     public Token Token { get; private set; }

@@ -1,4 +1,4 @@
-﻿namespace MyReminder.API.Helpers;
+﻿namespace MyReminder.Application.Helpers;
 
 public class Settings
 {

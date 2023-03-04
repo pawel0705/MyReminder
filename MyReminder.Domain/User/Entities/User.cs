@@ -10,11 +10,17 @@ public sealed class User : AggregateRoot<UserId>
         IdentityValueObject<UserId> id,
         Login login,
         Email email,
-        PasswordHash passwordHash) : base(id)
+        PasswordHash passwordHash,
+        Role role,
+        VerificationToken verificationToken) : base(id)
     {
         Login = login;
         Email = email;
         PasswordHash = passwordHash;
+        Role = role;
+        VerificationToken = verificationToken;
+
+        Created = DateTime.UtcNow;
     }
 
     public Login Login { get; private set; }

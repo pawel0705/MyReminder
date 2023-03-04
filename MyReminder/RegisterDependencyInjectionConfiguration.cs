@@ -1,6 +1,7 @@
 ﻿using MyReminder.API.Authorization;
 using MyReminder.Application;
 using MyReminder.Application.Encryption;
+using MyReminder.Application.Mail;
 using MyReminder.Application.Messaging;
 using MyReminder.Domain.Contracts;
 using MyReminder.Infrastructure.MediatR;
@@ -21,7 +22,8 @@ public static class RegisterDependencyInjectionConfiguration
            .AddScoped<ICommandBus, CommandBus>()
            .AddScoped<IQueryBus, QueryBus>()
            .AddScoped<IJwtUtils, JwtUtils>()
-           .AddScoped<IUserRepository, UserRepository>();
+           .AddScoped<IUserRepository, UserRepository>()
+           .AddScoped<IEmailService, EmailService>();
 
         return services;
     }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyReminder.Application.Encryption;
 using MyReminder.Domain.Contracts;
-using MyReminder.Domain.Entities.User.ValueObjects;
 using MyReminder.Domain.Models;
+using MyReminder.Domain.User.ValueObjects;
 using MyReminder.Infrastructure.Persistence;
+using System.Security.Cryptography;
 
 namespace MyReminder.Infrastructure.User.Repositories;
 
@@ -51,16 +52,23 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task Register(Login login, Email email, Password password)
+    public async Task<Domain.User.Entities.User> GetByEmail(Email email)
+    {
+        var user = await _context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+        // TODO exception if not found
+        return user;
+    }
+
+    public async Task<bool> Register(Login login, Email email, Password password)
     {
         if (await _context.Users.AnyAsync(x => x.Login == login))
         {
-            // TODO 
+            return false; // TODO some error/more information
         }
 
         if (await _context.Users.AnyAsync(x => x.Email == email))
         {
-            // TODO
+            return false; // TODO
         }
 
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password.Value);
@@ -69,9 +77,30 @@ public class UserRepository : IUserRepository
             new UserId(Guid.NewGuid()), 
             login, 
             email, 
-            new PasswordHash(hashedPassword));
+            new PasswordHash(hashedPassword),
+            Role.BasicUser,
+            GenerateVerificationToken());
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    private VerificationToken GenerateVerificationToken()
+    {
+        // token is a cryptographically strong random sequence of values
+        var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+
+        var verificationToken = new VerificationToken(token);
+
+        var tokenIsUnique = !_context.Users.Any(x => x.VerificationToken == verificationToken);
+
+        if (tokenIsUnique is false)
+        {
+            return GenerateVerificationToken();
+        }
+
+        return verificationToken;
     }
 }
