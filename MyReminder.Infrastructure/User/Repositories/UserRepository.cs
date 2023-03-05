@@ -1,8 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyReminder.Application.Encryption;
+using MyReminder.Application.Helpers;
 using MyReminder.Domain.Contracts;
 using MyReminder.Domain.Models;
+using MyReminder.Domain.User.Entities;
 using MyReminder.Domain.User.ValueObjects;
+using MyReminder.Infrastructure.Migrations;
 using MyReminder.Infrastructure.Persistence;
 using System.Security.Cryptography;
 
@@ -12,13 +16,16 @@ public class UserRepository : IUserRepository
 {
     private MyReminderContext _context;
     private IJwtUtils _jwtUtils;
+    private readonly Settings _settings;
 
     public UserRepository(
         MyReminderContext context,
-        IJwtUtils jwtUtils)
+        IJwtUtils jwtUtils,
+        IOptions<Settings> appSettings)
     {
         _context = context;
         _jwtUtils = jwtUtils;
+        _settings = appSettings.Value;
     }
 
     public async Task<AuthenticateResponse> Authenticate(Login login, Password password)
@@ -35,7 +42,7 @@ public class UserRepository : IUserRepository
             // TODO
         }
 
-        var generatedToken = _jwtUtils.GenerateToken(user);
+        var generatedToken = _jwtUtils.GenerateJwtToken(user);
 
         var response = new AuthenticateResponse(
             user.Id.Id.ToString(),
@@ -54,9 +61,46 @@ public class UserRepository : IUserRepository
 
     public async Task<Domain.User.Entities.User> GetByEmail(Email email)
     {
-        var user = await _context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+        var user = await _context.Users.Where(x => x.Email == email).SingleOrDefaultAsync();
         // TODO exception if not found
         return user;
+    }
+
+    public async Task<Domain.User.Entities.User> GetByLogin(Login login)
+    {
+        var user = await _context.Users
+            .Where(x => x.Login == login)
+            .SingleOrDefaultAsync();
+        // TODO exception if not found
+        return user;
+    }
+
+    public async Task UpdateRefreshTokens(UserId userId, Domain.User.Entities.RefreshToken newRefreshToken)
+    {
+        var user = await _context.Users
+            .Include(x => x.RefreshTokens)
+            .Where(x => x.Id == userId)
+            .SingleOrDefaultAsync();
+
+        user.UpdateRefreshTokens(newRefreshToken, _settings.RefreshTokenTimeToLive);
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task VerifyUser(VerificationToken verificationToken)
+    {
+        var user = await _context.Users.Where(x => x.VerificationToken == verificationToken).SingleOrDefaultAsync();
+        // TODO exception if not found
+        if (user is null)
+        {
+            // exception
+        }
+
+        user.Verify();
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
     }
 
     public async Task<bool> Register(Login login, Email email, Password password)
@@ -74,9 +118,9 @@ public class UserRepository : IUserRepository
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password.Value);
 
         var user = new Domain.User.Entities.User(
-            new UserId(Guid.NewGuid()), 
-            login, 
-            email, 
+            new UserId(Guid.NewGuid()),
+            login,
+            email,
             new PasswordHash(hashedPassword),
             Role.BasicUser,
             GenerateVerificationToken());

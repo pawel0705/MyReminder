@@ -25,7 +25,7 @@ public class JwtUtils : IJwtUtils
         _myReminderContext = myReminderContext;
     }
 
-    public string GenerateToken(User user)
+    public string GenerateJwtToken(User user)
     {
         // generate token that is valid for 7 days
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -41,7 +41,7 @@ public class JwtUtils : IJwtUtils
         return tokenHandler.WriteToken(token);
     }
 
-    public string? ValidateToken(string? token)
+    public string? ValidateJwtToken(string? token)
     {
         if (token == null)
         {

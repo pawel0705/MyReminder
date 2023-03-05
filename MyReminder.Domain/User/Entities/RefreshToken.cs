@@ -24,9 +24,9 @@ public class RefreshToken : Entity<RefreshTokenId>
     public DateTime Created { get; private set; }
     public CreatedByIp CreatedByIp { get; private set; }
     public DateTime? Revoked { get; private set; }
-    public RevokedByIp RevokedByIp { get; private set; }
-    public ReplacedByToken ReplacedByToken { get; private set; }
-    public ReasonRevoked ReasonRevoked { get; private set; }
+    public RevokedByIp? RevokedByIp { get; private set; }
+    public ReplacedByToken? ReplacedByToken { get; private set; }
+    public ReasonRevoked? ReasonRevoked { get; private set; }
 
     public bool IsExpired()
     {

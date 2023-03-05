@@ -21,8 +21,8 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
     public async Task<Guid> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
         var result = await _userRepository.Register(
-            new Login(command.Login), 
-            new Email(command.Email), 
+            new Login(command.Login),
+            new Email(command.Email),
             new Password(command.Password));
 
         if (result is true)
@@ -41,7 +41,7 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
         {
             // origin exists if request sent from browser single page app (e.g. Angular or React)
             // so send link to verify via single page app
-            var verifyUrl = $"{origin}/account/verify-email?token={user.VerificationToken}";
+            var verifyUrl = $"{origin}/account/verify-email?token={user?.VerificationToken.Value}";
             message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
         }
@@ -50,7 +50,7 @@ public sealed class RegisterUserCommandHandler : ICommandHandler<RegisterUserCom
             // origin missing if request sent directly to api (e.g. from Postman)
             // so send instructions to verify directly with api
             message = $@"<p>Please use the below token to verify your email address with the <code>/accounts/verify-email</code> api route:</p>
-                            <p><code>{user.VerificationToken}</code></p>";
+                            <p><code>{user?.VerificationToken.Value}</code></p>";
         }
 
         _emailService.Send(
