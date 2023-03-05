@@ -27,7 +27,7 @@ public class EmailService : IEmailService
 
         // send email
         using var smtp = new SmtpClient();
-        smtp.Connect(_settings.SmtpHost, _settings.SmtpPort, SecureSocketOptions.StartTls);
+        smtp.Connect(_settings.SmtpHost, _settings.SmtpPort, true);
         smtp.Authenticate(_settings.SmtpUser, _settings.SmtpPass);
         smtp.Send(email);
         smtp.Disconnect(true);
