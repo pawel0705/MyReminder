@@ -2,11 +2,15 @@
 using MyReminder.API.Authorization;
 using MyReminder.Application.Messaging;
 using MyReminder.Application.User.Features.LoginUser;
+using MyReminder.Application.User.Features.RefreshToken;
 using MyReminder.Application.User.Features.RegisterUser;
+using MyReminder.Application.User.Features.RevokeToken;
+using MyReminder.Application.User.Features.ValidateResetToken;
 using MyReminder.Application.User.Features.VerifyAccount;
 
 namespace MyReminder.API.Controllers;
 
+[Authorize]
 [ApiController]
 public sealed class UserController : Controller
 {
@@ -16,7 +20,6 @@ public sealed class UserController : Controller
 
     }
 
-    // TODO
     [AllowAnonymous]
     [HttpPost("login")]
     [ProducesResponseType(200)]
@@ -53,10 +56,42 @@ public sealed class UserController : Controller
 
     [AllowAnonymous]
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
+    public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
     {
         var refreshToken = Request.Cookies["refreshToken"];
-        var response = 
+        var command = new RefreshTokenCommand(refreshToken, IpAddress());
+        var result = await CommandBus.SendAsync(command, cancellationToken);
+        SetTokenCookie(result.RefreshToken);
+        return Ok(result);
+    }
+
+    [HttpPost("revoke-token")]
+    public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenCommand command, CancellationToken cancellationToken)
+    {
+        var token = command.Token ?? Request.Cookies["refreshToken"];
+
+        if (string.IsNullOrEmpty(token))
+        {
+            return BadRequest();
+        }
+
+        if (!Account.OwnsToken(new Domain.User.ValueObjects.Token(token)) && Account.Role != Domain.Contracts.Role.Admin)
+        {
+            return Unauthorized();
+        }
+
+        command = command with { IpAddress = IpAddress() };
+
+        var result = await CommandBus.SendAsync(command, cancellationToken);
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("validate-reset-token")]
+    public async Task<IActionResult> ValidateResetToken([FromBody] ValidateResetTokenCommand command, CancellationToken cancellationToken)
+    {
+        await CommandBus.SendAsync(command, cancellationToken);
+        return Ok();
     }
 
     private void SetTokenCookie(string token)

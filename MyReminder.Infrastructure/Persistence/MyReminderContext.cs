@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace MyReminder.Infrastructure.Persistence;
 
-public class MyReminderContext : DbContext
+public class MyReminderContext : DomainEventLogContext
 {
     public MyReminderContext(DbContextOptions<MyReminderContext> options) : base(options)
     {

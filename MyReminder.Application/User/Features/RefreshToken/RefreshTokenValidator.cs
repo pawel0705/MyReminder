@@ -1,5 +1,12 @@
-﻿namespace MyReminder.Application.User.Features.RefreshToken;
+﻿using FluentValidation;
+using MyReminder.Domain.User.ValueObjects;
 
-internal class RefreshTokenValidator
+namespace MyReminder.Application.User.Features.RefreshToken;
+
+public sealed class RefreshTokenValidator : AbstractValidator<RefreshTokenCommand>
 {
+    public RefreshTokenValidator()
+    {
+
+    }
 }
