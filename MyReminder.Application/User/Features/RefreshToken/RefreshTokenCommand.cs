@@ -1,5 +1,9 @@
-﻿namespace MyReminder.Application.User.Features.RefreshToken;
+﻿using MyReminder.Application.Messaging;
+using MyReminder.Application.Models;
 
-internal class RefreshTokenCommand
-{
-}
+namespace MyReminder.Application.User.Features.RefreshToken;
+
+public sealed record RefreshTokenCommand(
+    string RefreshToken,
+    string IpAddress) : ICommand<AuthenticateResponse>;
+

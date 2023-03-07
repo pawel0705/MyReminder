@@ -4,15 +4,13 @@ using MyReminder.Application.Encryption;
 using MyReminder.Application.Helpers;
 using MyReminder.Domain.Contracts;
 using MyReminder.Domain.Models;
-using MyReminder.Domain.User.Entities;
 using MyReminder.Domain.User.ValueObjects;
-using MyReminder.Infrastructure.Migrations;
 using MyReminder.Infrastructure.Persistence;
 using System.Security.Cryptography;
 
 namespace MyReminder.Infrastructure.User.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository : Repository<Domain.User.Entities.User, UserId>, IUserRepository
 {
     private MyReminderContext _context;
     private IJwtUtils _jwtUtils;
@@ -22,6 +20,7 @@ public class UserRepository : IUserRepository
         MyReminderContext context,
         IJwtUtils jwtUtils,
         IOptions<Settings> appSettings)
+        : base(context)
     {
         _context = context;
         _jwtUtils = jwtUtils;
@@ -72,6 +71,17 @@ public class UserRepository : IUserRepository
             .Where(x => x.Login == login)
             .SingleOrDefaultAsync();
         // TODO exception if not found
+        return user;
+    }
+
+    public async Task<Domain.User.Entities.User> GetByRefreshToken(Token token)
+    {
+        var user = await _context.Users
+            .Include(x => x.RefreshTokens)
+            .Where(x => x.RefreshTokens.Any(y => y.Token == token))
+            .SingleOrDefaultAsync();
+
+        // TODO if user is null
         return user;
     }
 
@@ -146,5 +156,13 @@ public class UserRepository : IUserRepository
         }
 
         return verificationToken;
+    }
+
+    public async Task<Domain.User.Entities.User> GetByResetToken(ResetToken resetToken)
+    {
+        var user = await _context.Users.SingleOrDefaultAsync(x =>
+            x.ResetToken == resetToken && x.ResetTokenExpires > DateTime.UtcNow);
+
+        return user;
     }
 }

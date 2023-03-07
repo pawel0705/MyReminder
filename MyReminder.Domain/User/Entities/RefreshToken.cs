@@ -42,4 +42,12 @@ public class RefreshToken : Entity<RefreshTokenId>
     {
         return Revoked is null && IsExpired() is false;
     }
+
+    public void RevokeToken(RevokedByIp ipAddress, ReasonRevoked? reasonRevoked, ReplacedByToken? replacedByToken)
+    {
+        Revoked = DateTime.UtcNow;
+        RevokedByIp = ipAddress;
+        ReasonRevoked = reasonRevoked;
+        ReplacedByToken = replacedByToken;
+    }
 }
