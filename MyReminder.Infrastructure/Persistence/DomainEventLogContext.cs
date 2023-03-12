@@ -16,13 +16,13 @@ public abstract class DomainEventLogContext : DbContext
 
     public async Task AddEventsAsync(IEnumerable<DomainEvent> domainEvents, CancellationToken cancellationToken)
     {
-        var events = domainEvents.Select(EventFactory.CreateFromDomainEvent);
-        await Set<Event>().AddRangeAsync(events, cancellationToken);
+    //    var events = domainEvents.Select(EventFactory.CreateFromDomainEvent);
+    //    await Set<Event>().AddRangeAsync(events, cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(_databaseSchemaName);
-        modelBuilder.ApplyConfiguration(new EventTypeConfiguration());
+  //      modelBuilder.HasDefaultSchema(_databaseSchemaName);
+  //      modelBuilder.ApplyConfiguration(new EventTypeConfiguration());
     }
 }
